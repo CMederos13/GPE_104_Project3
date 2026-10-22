@@ -6,13 +6,13 @@ using UnityEngine.UI;
 public class Health : MonoBehaviour
 {
     [Header("Health Values")]
-    public float maxHealth;
-    public float currentHealth;
-    
-   
+    public float maxHealth = 100;
+    public float currentHealth = 100;
+
+
 
     [Header("Health UI")]
-    public Image healthBar; 
+    public Image healthBar;
     [Header("Damage Numbers")]
     public GameObject damageNumberPrefab;
 
@@ -48,7 +48,7 @@ public class Health : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         // Plays the damage sound through the GameManager's SFX Player
-        if (currentHealth > 0)
+        if (currentHealth > 0 && GameManager.instance != null)
         {
             GameManager.instance.sfxPlayer.PlayOneShot(GameManager.instance.takingDamageSound);
         }
@@ -135,8 +135,4 @@ public class Health : MonoBehaviour
     }
 
 
-    public void Die()
-    {
-        Debug.Log("Wasted!");
-    }
 }
