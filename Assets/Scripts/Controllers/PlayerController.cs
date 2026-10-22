@@ -3,40 +3,24 @@ using UnityEngine;
 // Reads the player's key presses and tells the ship (pawn) what to do
 public class PlayerController : Controller
 {
-    [Header("Teleport Controls")]
-    // [T] key for random teleport 
-    public KeyCode TeleportKey;
 
-    [Header("Local Movement (Ship-Facing)")]
-    //[W] Key For moving Forward 
-    public KeyCode MoveForwardLocal;
-    //[S] key For moving Backward
-    public KeyCode MoveBackwardLocal;
-    //[D] Key For Rotating Clockwise 
-    public KeyCode RotateClockwise;
-    //[A] Key For Rotating Counter-Clockwise
-    public KeyCode RotateCounterClock;
+    [Header("Thrust (Physics)")]
+    public KeyCode thrustForwardKey = KeyCode.W; // [W] Pushes the ship forward
+    public KeyCode thrustBackwardKey = KeyCode.S;// [S] Pushes the ship backward 
 
-   
-    [Header("World Movement (Arrow Keys)")]
-    //World Space Movement 
-    //[Up] Arrow
-    public KeyCode MoveForwardWorld;
-    //[Down] Arrow
-    public KeyCode MoveBackwardWorld;
-    //[Left] Arrow
-    public KeyCode MoveLeftWorld;
-    //[Right] Arrow
-    public KeyCode MoveRightWorld;
+    [Header("Yaw (Turn Left/Right)")]
+    public KeyCode yawLeftKey = KeyCode.A; // [A] turns left
+    public KeyCode yawRightKey = KeyCode.D; // [D] turns Right 
 
-    [Header("Turbo Speed")]
-    //Speed Change
-    //Left Shift Button
-    public KeyCode TurboSpeedL;
-    
-    //Right Shift Button
-    public KeyCode TurboSpeedR;
-   
+    [Header("Pitch (Nose Up/Down)")]
+    public KeyCode pitchUpKey = KeyCode.Z;   // [Z] tilts the nose up
+    public KeyCode pitchDownKey = KeyCode.X; // [X] tilts the nose down
+
+    [Header("Roll")]
+    public KeyCode rollLeftKey = KeyCode.Q;  // [Q] rolls left
+    public KeyCode rollRightKey = KeyCode.E; // [E] rolls right
+
+
     [Header("Combat")]
     // Shoot Mechanics 
     public KeyCode shootKey;
@@ -46,87 +30,37 @@ public class PlayerController : Controller
     {
         if (pawn != null)
         {
-            if (Input.GetKey(TurboSpeedL) || Input.GetKey(TurboSpeedR))
+            if (Input.GetKey(thrustForwardKey))
             {
-                // Turbo versions of the method used here  
-
-                if (Input.GetKey(MoveForwardLocal))
-                {
-                    //Forward
-                    pawn.MoveForwardLocalTurbo();
-                }
-                if (Input.GetKey(MoveBackwardLocal))
-                {
-                    // Backward
-                    pawn.MoveBackwardLocalTurbo();
-                }
-                if (Input.GetKey(RotateCounterClock))
-                {
-                    //Counter-clockwise
-                    pawn.RotateCounterClockTurbo();
-                }
-                if (Input.GetKey(RotateClockwise))
-                {
-                    //Clockwise
-                    pawn.RotateClockTurbo();
-                }
+                pawn.Thrust(1);
             }
-
-            else
+            if (Input.GetKey(thrustBackwardKey))
             {
-                //Normal Version method used here
-                if (Input.GetKey(MoveForwardLocal))
-                {
-                    //Forward
-                    pawn.MoveForwardLocal();
-                }
-                if (Input.GetKey(MoveBackwardLocal))
-                {
-                    //Backward
-                    pawn.MoveBackwardLocal();
-                }
-                if (Input.GetKey(RotateClockwise))
-                {
-                    //Clockwise
-                    pawn.RotateClockwise();
-                }
-                if (Input.GetKey(RotateCounterClock))
-                {
-                    //CounterClockwise
-                    pawn.RotateCounterClock();
-
-                }
-
+                pawn.Thrust(-1);
             }
-
-
-            //World Space Key Presses 
-
-            if (Input.GetKeyDown(MoveForwardWorld))
+            if (Input.GetKey(yawLeftKey))
             {
-                // Up 
-                pawn.MoveForwardWorld();
+                pawn.Yaw(-1);
             }
-            if (Input.GetKeyDown(MoveBackwardWorld))
+            if (Input.GetKey(yawRightKey))
             {
-                // Down
-                pawn.MoveBackwardWorld();
+                pawn.Yaw(1);
             }
-            if (Input.GetKeyDown(MoveRightWorld))
+            if (Input.GetKey(pitchUpKey))
             {
-                // Right
-                pawn.MoveRightWorld();
+                pawn.Pitch(-1);
             }
-            if (Input.GetKeyDown(MoveLeftWorld))
+            if (Input.GetKey(pitchDownKey))
             {
-                // Left
-                pawn.MoveLeftWorld();
+                pawn.Pitch(1);
             }
-
-            //Teleport Key Pressed
-            if (Input.GetKeyDown(TeleportKey))
+            if (Input.GetKey(rollLeftKey))
             {
-                pawn.Teleport();
+                pawn.Roll(1);
+            }
+            if (Input.GetKey(rollRightKey))
+            {
+                pawn.Roll(-1);
             }
 
             //Shoot key press 
@@ -137,7 +71,7 @@ public class PlayerController : Controller
             }
         }
     }
-       
+
     //Registers this controller with the GameManager so it's able to hand controls to the new ship
     public override void Start()
     {
@@ -146,12 +80,10 @@ public class PlayerController : Controller
             GameManager.instance.playerController = this;
         }
     }
-    
+
     // Checks for key presses every frame
     public override void Update()
     {
         MakeDecisions();
     }
-
-   
 }

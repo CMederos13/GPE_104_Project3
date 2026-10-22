@@ -2,135 +2,63 @@ using UnityEngine;
 
 public class StarShipPawn : Pawn
 {
-    [Header("Components")]
-    public Transform tf;
+    private Transform tf;
+    private Rigidbody rb;
     private Shooter sh;
-    
-
-    [Header("Local Movement Speed")]
-    public float normalSpeed; // W/S speed
-    public float normalRotateSpeed; // A/D rotation speed
 
 
-    [Header("Turbo Speeds (Shift)")]
-   
-    public float turboSpeed;
-    public float turboRotateSpeed; 
+    [Header("Movement")]
+    public float thrustForce = 20f; // W/S push strength (Physical force)
+    public float yawSpeed = 90f; // A/D turn speed in degrees per second 
+    public float pitchSpeed = 90f;// Z/X nose up/down speed in degrees per second 
+    public float rollSpeed = 120f; // Q/E roll speed in degrees per second
 
-    [Header("World Movement (Arrow Keys)")]
-    public float worldSpeed = 2f; // how far each arrow key press jumps the ship
-    
-
-  
-    
-
-    public override void MoveForwardLocal()
+    private void Start()
     {
-        tf.position = tf.position + tf.up * normalSpeed * Time.deltaTime;
+        tf = GetComponent<Transform>();
+        rb = GetComponent<Rigidbody>();
+        sh = GetComponent<Shooter>();
     }
 
-    public override void MoveBackwardLocal()
+    //pushes the ship along its forward axis with physics 
+    public override void Thrust(float direction)
     {
-        tf.position = tf.position + tf.up * -normalSpeed * Time.deltaTime;
+        if (rb != null)
+        {
+            rb.AddForce(tf.forward * direction * thrustForce);
+        }
     }
 
-    public override void RotateClockwise()
+    //Turns around the up axis, Time.deltaTime makes it degree per second instead of per frame 
+    public override void Yaw(float direction)
     {
-        tf.Rotate(0,0,normalRotateSpeed * -Time.deltaTime);
+        tf.Rotate(0, direction * yawSpeed * Time.deltaTime, 0);
     }
 
-    public override void RotateCounterClock()
+    // Tilts the nose around the right axis 
+    public override void Pitch(float direction)
     {
-        tf.Rotate(0, 0, normalRotateSpeed * Time.deltaTime);
-    }
-    //World Section: Arrow keys jump ship in a world directions
-    public override void MoveForwardWorld()
-    {
-        tf.position = tf.position + Vector3.up * worldSpeed;
-        PlayTeleportSound();
+        tf.Rotate(direction * pitchSpeed * Time.deltaTime, 0, 0);
     }
 
-    public override void MoveLeftWorld()
+    // Rolls around the forward axis
+    public override void Roll(float direction)
     {
-        tf.position = tf.position + -Vector3.right * worldSpeed;
-        PlayTeleportSound();
-    }
-
-    public override void MoveRightWorld()
-    {
-        tf.position = tf.position + Vector3.right * worldSpeed;
-        PlayTeleportSound();
-    }
-    public override void MoveBackwardWorld()
-    {
-        tf.position = tf.position + -Vector3.up * worldSpeed;
-        PlayTeleportSound();
-    }
-
-    //Turbo Section
-    public override void RotateClockTurbo()
-    {
-        tf.Rotate(0, 0, turboRotateSpeed * -Time.deltaTime);
-    }
-
-    public override void RotateCounterClockTurbo()
-    {
-        tf.Rotate(0, 0, turboRotateSpeed * Time.deltaTime);
-    }
-
-    public override void MoveForwardLocalTurbo()
-    {
-        tf.position = tf.position + tf.up * turboSpeed * Time.deltaTime;
-    }
-
-    public override void MoveBackwardLocalTurbo()
-    {
-        tf.position = tf.position + tf.up * -turboSpeed * Time.deltaTime;
-    }
-
-
-
-    public override void MakeDecsisions()
-    {
-        //Controller only does make decisions
+        tf.Rotate(0, 0, direction * rollSpeed * Time.deltaTime);
     }
 
     public override void Shoot()
     {
-        // telling our shooter component to shoot
+        //telling our shooter component to Fire
         if (sh != null)
         {
             sh.Shoot();
         }
-
     }
-
-    // Teleports to a random spot inside the gameManager's screen bound 
-    public override void Teleport()
-    {
-        float x = Random.Range(GameManager.instance.minX, GameManager.instance.maxX);
-        float y = Random.Range(GameManager.instance.minY, GameManager.instance.maxY);
-        tf.position = new Vector3(x,y,0);
-        PlayTeleportSound();
-    }
-
-    //plays teleport sound through SFX Player
-    private void PlayTeleportSound()
-    {
-        GameManager.instance.sfxPlayer.PlayOneShot(GameManager.instance.teleportSound);
-    }
-
-    
-    public override void Start()
-    {
-        tf = GetComponent<Transform>();
-        sh = GetComponent<Shooter>();
-    }
-
-    public override void Update()
-    {
-
-    }
-
-
 }
+
+
+
+
+
+
