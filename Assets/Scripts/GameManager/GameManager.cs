@@ -7,11 +7,10 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    
-    
 
     [Header("Player Lives")]
-    public GameObject playerShipPreFab; //StarShipPawn prefab, spawn at the world origin
+    public GameObject playerShipPreFab; //playership prefab, spawns at the player spawn point
+    public Transform playerSpawnPoint; // where the ship spawns up in the air
     public int startingLives = 3; // Designers can set the amount of lives the player gets
     private int currentLives;
     public TMP_Text livesText; // Shows lives left in the UI 
@@ -20,25 +19,12 @@ public class GameManager : MonoBehaviour
     public Image playerHealthBar; // Health Bar fill image the ship updates
     public Transform playerDamageNumberParent; // Where the ghost damage numbers pop up
 
-    [Header("Enemy Spawning")]
-    public GameObject asteroidPreFab; // Asteroid spawn at the start
-    public GameObject ufoPreFab; // UFO enemy 
-    public int enemyCount = 5; // Designer set how many enemies spawn
-    public float ufoChancePercent = 20; // Chances of (0-100) that each enemy is a UFO Obstacle 
-    public float safeSpawnDistance = 3; // keeps enemies from spawning on top of player
-
-    [Header("Screen Bounds")]
-    public float minX = -9;
-    public float maxX = 9;
-    public float minY = -5;
-    public float maxY = 5;
-    public float warpMargin = 1f; // how far past the bounds objects travel before warping
-
-
+    [Header("Camera")]
+    public CameraFollow cameraFollow; // The camera that follows the ship, gets the new ship after every respawan 
 
     [Header("Gameplay")]
     public PlayerController playerController;
-    public List<Obstacle> obstacleList;
+    public List<Obstacle> obstacleList; //kept for enemies from project 2
 
     public int score;
 
@@ -47,15 +33,13 @@ public class GameManager : MonoBehaviour
     [Header("Audio Clips")]
     public AudioClip fireGunSound;
 
-    public AudioClip teleportSound;
-
     public AudioClip gameOverSound;
 
     public AudioClip backgroundMusic;
 
     public AudioClip takingDamageSound;
 
-    public AudioClip ufoHumSound;
+    public AudioClip ufoHumSound; //kept for enemies from project 2
 
     public AudioClip deathSound; //Explosion when the ship or an enemy is destroyed
 
@@ -64,7 +48,7 @@ public class GameManager : MonoBehaviour
 
     public AudioSource musicPlayer;
 
-    public AudioListener cameraListener; // Used while in Menus
+    public AudioListener cameraListener; // The camera's ears the whole time in 3D
 
     [Header("Game Screens")]
     public GameObject mainMenuScreen;
@@ -75,7 +59,7 @@ public class GameManager : MonoBehaviour
 
 
     [Header("Gameplay Screens")]
-    public GameObject gameplay; // parent of ship,controller, and asteroids
+    public GameObject gameplay; // parent of the ship
     public GameObject gameplayUI; // Score and Health Bar
 
 
@@ -96,8 +80,6 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-
     }
 
     void Start()
@@ -110,18 +92,13 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
-        //checking for win/lose while game is running
+        // checking for a lost ship while game is running 
         if (isGameRunning)
         {
             if (playerController != null && playerController.pawn == null)
             {
                 PlayerDied();
             }
-            else if (obstacleList.Count <= 0)
-            {
-                DoShowVictory();
-            }
-
         }
 
         if (text != null)
@@ -150,7 +127,7 @@ public class GameManager : MonoBehaviour
             DoShowGameOver();
         }
     }
-    //Creates a new ship at the world origin and connects it to the Controller and Health UI
+    // Creates new ship at the spawn point and connects it to controller, camera and Health UI
     private void SpawnPlayer()
     {
         // Removes the old ship if one is still in the scene 
@@ -158,53 +135,26 @@ public class GameManager : MonoBehaviour
         {
             Destroy(playerController.pawn.gameObject);
         }
-        GameObject newShip = Instantiate(playerShipPreFab, Vector3.zero, Quaternion.identity, gameplay.transform);
+        GameObject newShip = Instantiate(playerShipPreFab, playerSpawnPoint.position, playerSpawnPoint.rotation, gameplay.transform);
 
         // Hands over the new ship to the player controller
         playerController.pawn = newShip.GetComponent<Pawn>();
 
+        if (cameraFollow != null)
+        {
+            cameraFollow.target = newShip.transform;
+        }
+
         //Connect the new ship's health to the health bar UI
         Health shipHealth = newShip.GetComponent<Health>();
-        shipHealth.healthBar = playerHealthBar;
-        shipHealth.damageNumberParent = playerDamageNumberParent;
-
-
-        // The new ship's audio listener takes over from the camera 
-        cameraListener.enabled = false;
-
-    }
-    private void SpawnEnemies()
-    {
-        // Clears old enemies and spawns new ones at random positions
-        for (int i = obstacleList.Count - 1; i >= 0; i--)
+        if (shipHealth != null)
         {
-            Destroy(obstacleList[i].gameObject);
-        }
-        obstacleList.Clear();
-
-        for (int i = 0; i < enemyCount; i++)
-        {
-            // Picks a random spot and chooses again if obstacle is to close
-          Vector3 spawnPosition = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), 0);
-          while (Vector3.Distance(spawnPosition, Vector3.zero) < safeSpawnDistance)
-            {
-                spawnPosition = new Vector3(Random.Range(minX, maxX), Random.Range(minY, maxY), 0);
-            }
-            // Roll the UFO chance; Spawns an Asteroid if there no UFO or the roll fails 
-            GameObject prefabToSpawn = asteroidPreFab;
-
-            if (ufoPreFab != null && Random.Range(0f, 100f) < ufoChancePercent)
-            {
-                prefabToSpawn = ufoPreFab;
-            }
-
-            Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity, gameplay.transform);
+            shipHealth.healthBar = playerHealthBar;
+            shipHealth.damageNumberParent = playerDamageNumberParent;
         }
     }
-                
 
     //Turns screen and gameplay off, this on what it needs when the bottons clicked
-    
     private void HideAllScreens()
     {
         mainMenuScreen.SetActive(false);
@@ -246,15 +196,14 @@ public class GameManager : MonoBehaviour
     {
         HideAllScreens();
         gameplay.SetActive(true);
-        SpawnEnemies();
         gameplayUI.SetActive(true);
-        
+
         if (!musicPlayer.isPlaying)
         {
             musicPlayer.Play();
         }
-        //Reset Run: Score 0, full lives, new ship at the origin
-       
+        //Reset Run: Score 0, full lives, new ship at the spawn point
+
         score = 0;
         currentLives = startingLives;
         SpawnPlayer();
@@ -277,4 +226,3 @@ public class GameManager : MonoBehaviour
         cameraListener.enabled = true;
     }
 }
-
