@@ -13,7 +13,7 @@ public class StarShipPawn : Pawn
     public float pitchSpeed = 90f;// Z/X nose up/down speed in degrees per second 
     public float rollSpeed = 120f; // Q/E roll speed in degrees per second
 
-    private void Start()
+    private void Awake()
     {
         tf = GetComponent<Transform>();
         rb = GetComponent<Rigidbody>();
