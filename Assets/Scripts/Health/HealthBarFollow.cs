@@ -1,23 +1,24 @@
 using UnityEngine;
 
-
-// keeps UFO's health bar upright and above it, even when the UFO rotates 
+// Keeps a world-space health bar above its owner and facing the camera
 public class HealthBarFollow : MonoBehaviour
 {
-    [Header("Position")]
-    public Vector3 offset = new Vector3(0, 0.385f, 0); // how far above the enemy the bar sits
-   
-    private Transform owner; // The enemy UFO this bar belongs to
+    public Transform owner;                         // the UFO this bar belongs to
+    public Vector3 offset = new Vector3(0, 2f, 0);  // how far above the owner
 
-    private void Start()
+    // LateUpdate runs after the UFO moved and turned, so the bar doesn't jitter or spin with it
+    private void LateUpdate()
     {
-        owner = transform.parent;
-    }
+        if (owner == null)
+        {
+            return;
+        }
 
-    // LateUpdate runs after the enemy has moved and turned this frame
-    void LateUpdate()
-    {
-        transform.rotation = Quaternion.identity; //  ALWAYS level
-        transform.position = owner.position + offset; // ALWAYS above the UFO
+        transform.position = owner.position + offset;
+
+        if (Camera.main != null)
+        {
+            transform.rotation = Camera.main.transform.rotation; // always faces the player's camera
+        }
     }
 }

@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Gameplay")]
     public PlayerController playerController;
+    public LevelData currentLevel;
     public List<Obstacle> obstacleList; //kept for enemies from project 2
 
     public int score;
@@ -56,6 +57,7 @@ public class GameManager : MonoBehaviour
     public GameObject settingsScreen;
     public GameObject victoryScreen;
     public GameObject gameOverScreen;
+    public GameObject titleScreen; // "Press Enter to Start" screen, shown first
 
 
     [Header("Gameplay Screens")]
@@ -87,10 +89,14 @@ public class GameManager : MonoBehaviour
         musicPlayer.clip = backgroundMusic;
         musicPlayer.Play();
 
-        DoShowMainMenu();
+        DoShowTitleScreen();
     }
     void Update()
     {
+        if (titleScreen != null && titleScreen.activeSelf && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
+        {
+            DoShowMainMenu();
+        }
 
         // checking for a lost ship while game is running 
         if (isGameRunning)
@@ -157,6 +163,7 @@ public class GameManager : MonoBehaviour
     //Turns screen and gameplay off, this on what it needs when the bottons clicked
     private void HideAllScreens()
     {
+        if (titleScreen != null) titleScreen.SetActive(false);
         mainMenuScreen.SetActive(false);
         creditsScreen.SetActive(false);
         settingsScreen.SetActive(false);
@@ -166,6 +173,16 @@ public class GameManager : MonoBehaviour
         gameplayUI.SetActive(false);
 
     }
+
+    public void DoShowTitleScreen()
+    {
+        HideAllScreens();
+        titleScreen.SetActive(true);
+        cameraListener.enabled = true;
+        isGameRunning = false;
+        Time.timeScale = 1;
+    }
+
     public void DoShowMainMenu()
     {
         //Restarts Music if game over stopped it
@@ -207,6 +224,12 @@ public class GameManager : MonoBehaviour
         score = 0;
         currentLives = startingLives;
         SpawnPlayer();
+
+        if (currentLevel != null)
+        {
+            currentLevel.SpawnEntities();
+        }
+
         Time.timeScale = 1;
         isGameRunning = true;
     }

@@ -1,18 +1,18 @@
- using UnityEngine;
+using UnityEngine;
 
-//Base class for all AI Controllers; Holds what every AI needs
+// Base class for computer-controlled pawns, finds the player for them to chase
 public abstract class AIController : Controller
 {
-    protected Transform target; // What this AI is Chasing
+    protected Transform target; // what this AI is chasing
 
-    protected void FindPlayerTarget() // finds the player's current ship (it changes each time the player respawns) 
+    // Asks the GameManager for the player's ship; target stays null if the player is dead or not spawned
+    protected void FindPlayerTarget()
     {
         target = null;
 
-        if (GameManager.instance.playerController != null && GameManager.instance.playerController.pawn != null)
+        if (GameManager.instance != null && GameManager.instance.playerController != null && GameManager.instance.playerController.pawn != null)
         {
             target = GameManager.instance.playerController.pawn.transform;
         }
     }
-
 }
