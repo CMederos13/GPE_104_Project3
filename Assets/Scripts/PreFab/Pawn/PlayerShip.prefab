@@ -251,7 +251,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6182eb313d326244881a1d8712f66f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StarShipPawn
-  thrustForce: 12
+  thrustForce: 20
   yawSpeed: 60
   pitchSpeed: 50
   rollSpeed: 80
@@ -268,7 +268,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 100
-  currentHealth: 100
+  currentHealth: 50
   healthBar: {fileID: 0}
   damageNumberPrefab: {fileID: 0}
   damageNumberParent: {fileID: 0}

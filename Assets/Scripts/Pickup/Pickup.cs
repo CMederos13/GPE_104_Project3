@@ -8,6 +8,14 @@ public abstract class Pickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Pickup touched by: " + other.name);
+        
+        // This was made so bullets go through pickups; only the ship's body can collect 
+        if (other.GetComponent<Bullet>() != null)
+        {
+            return;
+        }
+
         // Only the player's ship can pick things up (bullets and UFOs are ignored)
         StarShipPawn player = other.GetComponentInParent<StarShipPawn>();
 
