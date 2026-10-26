@@ -268,7 +268,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 100
-  currentHealth: 50
+  currentHealth: 100
   healthBar: {fileID: 0}
   damageNumberPrefab: {fileID: 0}
   damageNumberParent: {fileID: 0}

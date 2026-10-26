@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     public Transform playerDamageNumberParent; // Where the ghost damage numbers pop up
 
     [Header("Camera")]
-    public CameraFollow cameraFollow; // The camera that follows the ship, gets the new ship after every respawan 
+    public CameraFollow cameraFollow; // The camera that follows the ship, gets the new ship after every respawn 
 
     [Header("Gameplay")]
     public PlayerController playerController;
@@ -30,6 +30,10 @@ public class GameManager : MonoBehaviour
     public int score;
 
     public TMP_Text text;
+
+    [Header("High Score")] // Highscore saved between plays
+    public TMP_Text highScoreText; //Shows this run's score and the best score on the Game Over screen 
+    private int highScore; // best score so far, loaded from PlayerPrefs so it survives similar to settings  
 
     [Header("Audio Clips")]
     public AudioClip fireGunSound;
@@ -57,7 +61,7 @@ public class GameManager : MonoBehaviour
     public GameObject settingsScreen;
     public GameObject victoryScreen;
     public GameObject gameOverScreen;
-    public GameObject titleScreen; // "Press Enter to Start" screen, shown first
+    public GameObject titleScreen; // "Press Enter to Start"
 
 
     [Header("Gameplay Screens")]
@@ -84,16 +88,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Loads the saved High Score, starts the music and shows the title screen
     void Start()
     {
+        // 0 if no high score was ever saved 
+        highScore = PlayerPrefs.GetInt("HighScore", 0);
+
         musicPlayer.clip = backgroundMusic;
         musicPlayer.Play();
 
         DoShowTitleScreen();
     }
+
+    // Any Key on the title screen opens the main menu, then checks for lost ships and updates the UI
     void Update()
     {
-        if (titleScreen != null && titleScreen.activeSelf && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)))
+        if (titleScreen != null && titleScreen.activeSelf && Input.anyKeyDown)
         {
             DoShowMainMenu();
         }
@@ -146,7 +156,7 @@ public class GameManager : MonoBehaviour
         // Hands over the new ship to the player controller
         playerController.pawn = newShip.GetComponent<Pawn>();
 
-        if (cameraFollow != null)
+        if (cameraFollow != null) // tells the camera to follow the new ship 
         {
             cameraFollow.target = newShip.transform;
         }
@@ -225,7 +235,7 @@ public class GameManager : MonoBehaviour
         currentLives = startingLives;
         SpawnPlayer();
 
-        if (currentLevel != null)
+        if (currentLevel != null) // Fresh pickups and UFOs every new game
         {
             currentLevel.SpawnEntities();
         }
@@ -241,9 +251,24 @@ public class GameManager : MonoBehaviour
         cameraListener.enabled = true;
     }
 
+    // Saves a new high score and shows the Game Over screen
     public void DoShowGameOver()
     {
         isGameRunning = false;
+
+        // Asks if new best? Save it so it persists between plays 
+        if (score > highScore) 
+        {
+            highScore = score;
+            PlayerPrefs.SetInt("HighScore", highScore);
+            PlayerPrefs.Save();
+        }
+
+        if (highScoreText != null)
+        {
+            highScoreText.text = "Score: " + score + "\nHigh Score: " + highScore;
+        }
+
         HideAllScreens();
         gameOverScreen.SetActive(true);
         cameraListener.enabled = true;

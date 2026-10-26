@@ -106,26 +106,13 @@ public class Health : MonoBehaviour
     }
     public void Heal(float healAmount)
     {
-        // Healing Message
-        Debug.Log("Patching up!");
         // Adding Health to Current Health
 
         currentHealth += healAmount;
 
-        // if health > max then set health to max
-        //if (currentHealth > maxHealth)
-        // {
-        //   currentHealth = maxHealth;
-        // setting the max health for healing 
-
+        //caps health at max so healing can't go over 100 
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-
-        // if health > max then set health to max
-        //if (currentHealth > maxHealth)
-        // {
-        //   currentHealth = maxHealth;
-        //}
         if (healthBar != null)
         {
             healthBar.fillAmount = currentHealth / maxHealth;
