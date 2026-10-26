@@ -2606,6 +2606,26 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5392645368817896103, guid: 23b2f6b8b8f64ec48aa548740887f8d0, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 110
+      objectReference: {fileID: 0}
+    - target: {fileID: 5518849473598341532, guid: 23b2f6b8b8f64ec48aa548740887f8d0, type: 3}
+      propertyPath: m_text
+      value: '2D Sprites : "Space Shooter Redux" by Kenney (kenney.nl) licensed under CC0
+
+        3D Models: "Space kit" by Kenney (kenney.nl) licensed under CC0
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 5518849473598341532, guid: 23b2f6b8b8f64ec48aa548740887f8d0, type: 3}
+      propertyPath: m_fontSize
+      value: 28
+      objectReference: {fileID: 0}
+    - target: {fileID: 5518849473598341532, guid: 23b2f6b8b8f64ec48aa548740887f8d0, type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6251684750632565194, guid: 23b2f6b8b8f64ec48aa548740887f8d0, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.0177
@@ -2646,9 +2666,13 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1.0177
       objectReference: {fileID: 0}
+    - target: {fileID: 8070478091353116698, guid: 23b2f6b8b8f64ec48aa548740887f8d0, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -40
+      objectReference: {fileID: 0}
     - target: {fileID: 8129032861435187243, guid: 23b2f6b8b8f64ec48aa548740887f8d0, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8507385124155991119, guid: 23b2f6b8b8f64ec48aa548740887f8d0, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
