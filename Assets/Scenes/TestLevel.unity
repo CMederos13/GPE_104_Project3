@@ -1559,7 +1559,7 @@ Transform:
   m_GameObject: {fileID: 746192061}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: -0, z: 0}
+  m_LocalPosition: {x: -0, y: -10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1594,7 +1594,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   levelSize: {x: 100, y: 100, z: 100}
-  maxHeight: 40
+  maxHeight: 30
   entitiesToSpawn: 6
   spawnPoints: []
 --- !u!1 &756480213
@@ -1622,7 +1622,7 @@ Transform:
   m_GameObject: {fileID: 756480213}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

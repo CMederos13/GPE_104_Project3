@@ -6,13 +6,17 @@ public class HealthPickup : Pickup
     [Header("Healing")]
     public float healAmount = 25f;
 
-    protected override void Apply(StarShipPawn player)
+    protected override bool Apply(StarShipPawn player)
     {
         Health health = player.GetComponent<Health>();
 
-        if (health != null)
+        // Already at full health (or no Health) = don't use up the pack
+        if (health == null || health.currentHealth >= health.maxHealth)
         {
-            health.Heal(healAmount);
+            return false;
         }
+
+        health.Heal(healAmount);
+        return true;
     }
 }

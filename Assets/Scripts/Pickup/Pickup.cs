@@ -8,9 +8,7 @@ public abstract class Pickup : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Pickup touched by: " + other.name);
-        
-        // This was made so bullets go through pickups; only the ship's body can collect 
+        // Bullets pass through pickups; only the ship's body can collect them
         if (other.GetComponent<Bullet>() != null)
         {
             return;
@@ -24,16 +22,18 @@ public abstract class Pickup : MonoBehaviour
             return;
         }
 
-        Apply(player);
-
-        if (pickupSound != null && GameManager.instance != null)
+        // Only used up if it actually did something
+        if (Apply(player))
         {
-            GameManager.instance.sfxPlayer.PlayOneShot(pickupSound);
-        }
+            if (pickupSound != null && GameManager.instance != null)
+            {
+                GameManager.instance.sfxPlayer.PlayOneShot(pickupSound);
+            }
 
-        Destroy(gameObject);
+            Destroy(gameObject);
+        }
     }
 
-    // Each kind of pickup writes its own effect
-    protected abstract void Apply(StarShipPawn player);
+    // Each kind of pickup writes its own effect, returns true if it was used
+    protected abstract bool Apply(StarShipPawn player);
 }
