@@ -28,9 +28,28 @@ public class LevelData : MonoBehaviour
         SpawnEntities();
     }
 
-    // Keeps the player under the ceiling
+    // Refills the level when it's empty and keeps the player under the ceiling
     private void Update()
     {
+        //Refill the level when nothing worth points is left (Only health packs or nothing remaining)
+        if (spawnedEntities.Count > 0)
+        {
+            bool scoringLeft = false;
+            foreach (GameObject entity in spawnedEntities)
+            {
+                // still alive and not a health pack = a ufo or astronaut is left
+                if (entity != null && entity.GetComponent<HealthPickup>() == null)
+                {
+                    scoringLeft = true;
+                }
+            }
+            if (!scoringLeft)
+            {
+                SpawnEntities();
+            }
+        }
+    
+
         if (GameManager.instance == null || GameManager.instance.playerController == null)
         {
             return;
@@ -57,6 +76,7 @@ public class LevelData : MonoBehaviour
             }
         }
     }
+
 
     // Clears old entities, then spawns at a random set of spawn points
     public void SpawnEntities()
@@ -95,7 +115,8 @@ public class LevelData : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(transform.position + new Vector3(0, levelSize.y / 2, 0), levelSize);
 
+        // Ceiling is drawn at world Y = maxHeight, the same height the Update check uses
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(transform.position + new Vector3(0, maxHeight, 0), new Vector3(levelSize.x, 0, levelSize.z));
+        Gizmos.DrawWireCube(new Vector3(transform.position.x, maxHeight, transform.position.z), new Vector3(levelSize.x, 0, levelSize.z));
     }
 }

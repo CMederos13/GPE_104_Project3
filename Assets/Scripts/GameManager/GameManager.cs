@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
 
     [Header("High Score")] // Highscore saved between plays
     public TMP_Text highScoreText; //Shows this run's score and the best score on the Game Over screen 
+    public TMP_Text hudHighScoreText; // shows the best score on the gameplay HUD next to Current score and lives
     private int highScore; // best score so far, loaded from PlayerPrefs so it survives similar to settings  
 
     [Header("Audio Clips")]
@@ -61,7 +62,7 @@ public class GameManager : MonoBehaviour
     public GameObject settingsScreen;
     public GameObject victoryScreen;
     public GameObject gameOverScreen;
-    public GameObject titleScreen; // "Press Enter to Start"
+    public GameObject titleScreen; // "Press Any Key to Start"
 
 
     [Header("Gameplay Screens")]
@@ -124,6 +125,11 @@ public class GameManager : MonoBehaviour
         if (livesText != null)
         {
             livesText.text = "Lives: " + currentLives;
+        }
+        // Shows the best saved highscore, or current score once you've beaten it 
+        if (hudHighScoreText != null)
+        {
+            hudHighScoreText.text = "Best: " + Mathf.Max(highScore, score);
         }
     }
 
@@ -257,7 +263,7 @@ public class GameManager : MonoBehaviour
         isGameRunning = false;
 
         // Asks if new best? Save it so it persists between plays 
-        if (score > highScore) 
+        if (score > highScore)
         {
             highScore = score;
             PlayerPrefs.SetInt("HighScore", highScore);
